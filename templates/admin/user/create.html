@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+
+
+{% block body %}
+
+<!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Users</h3>
+              </div>
+
+
+
+
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form role="form" action="/admin/topic/create" method="post" enctype="multipart/form-data">
+
+                <div class="card-body">
+
+                <div class="col-lg-10">
+
+
+                  <div class="form-group">
+                    <label for="name">username</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" >
+                  </div>
+
+
+
+                  <div class="form-group">
+                    <label for="words">password</label>
+                    <input type="text" class="form-control" id="words" name="words" placeholder="Enter words :ex=(word1,word2)">
+                  </div>
+
+                </div>
+
+
+			</div>
+
+				
+		        <!-- /.col-->
+
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <a href="/admin/topic/show" class="btn btn-warning">Back</a>
+
+                </div>
+
+				</form>
+               </div>
+
+
+{% endblock %}
