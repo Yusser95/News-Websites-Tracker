@@ -229,7 +229,7 @@
               data : $('#myForm').serialize(),
               success : function (response) {
                 $.unblockUI();
-                alert("The server says: {success:" + response.success+"}");
+                // alert("The server says: {success:" + response.success+"}");
                 $('#datatable tbody').empty();
 
                 var table = $("#datatable tbody");
