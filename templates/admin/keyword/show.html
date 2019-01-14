@@ -6,7 +6,7 @@
 <!-- Default box -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Users</h3>
+          <h3 class="card-title">Keywords</h3>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -19,8 +19,8 @@
 
           <div class="card">
             <div class="card-header row">
-              <h3 class="col-lg-6 card-title">Users Crud System</h3>
-              <a href="/admin/topic/create" class="offset-3 col-lg-3 btn btn-success" style="float: right;">Add New</a>
+              <h3 class="col-lg-6 card-title">Keywords Crud System</h3>
+              <a href="/admin/keyword/create" class="offset-3 col-lg-3 btn btn-success" style="float: right;">Add New</a>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -28,8 +28,8 @@
                 <thead>
                 <tr>
                   <th>id</th>
-                  <th>usesrname</th>
-                  <th>password</th>
+                  <th>ch_word</th>
+                  <th>en_word</th>
                   <th>Edit</th>
                   <th>Delete</th>
                   <!-- <th>Delete</th> -->
@@ -37,13 +37,13 @@
                 </thead>
                 <tbody>
                   <?php 
-                  {% for item in topics %}
+                  {% for item in keywords %}
                     <tr>
                       <td>{{ item['id'] }}</td>
-                      <td>{{ item['name'] }}</td>
-                      <td>{{ item['words'] }}</td>
-                      <td> <a href="/admin/topic/edit/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-edit"></i></a></td>
-                      <td> <a href="/admin/topic/delete/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-trash"></i></a></td>
+                      <td>{{ item.ch_word }}</td>
+                      <td>{{ item.en_word }}</td>
+                      <td> <a href="/admin/keyword/edit/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-edit"></i></a></td>
+                      <td> <a href="/admin/keyword/delete/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-trash"></i></a></td>
                   
                     </tr>
                   {% endfor %}
@@ -52,8 +52,8 @@
                 <tfoot>
                 <tr>
                   <th>id</th>
-                  <th>usesrname</th>
-                  <th>password</th>
+                  <th>ch_word</th>
+                  <th>en_word</th>
                   <th>Edit</th>
                   <th>Delete</th>
                   <!-- <th>Delete</th> -->

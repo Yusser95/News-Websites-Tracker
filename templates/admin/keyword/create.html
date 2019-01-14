@@ -6,7 +6,7 @@
 <!-- general form elements -->
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Topic</h3>
+                <h3 class="card-title">Keywords</h3>
               </div>
 
 
@@ -14,7 +14,7 @@
 
               <!-- /.card-header -->
               <!-- form start -->
-              <form role="form" action="/admin/topic/edit/{{item['id']}}" method="post" enctype="multipart/form-data">
+              <form role="form" action="/admin/keyword/create" method="post" enctype="multipart/form-data">
 
                 <div class="card-body">
 
@@ -22,15 +22,15 @@
 
 
                   <div class="form-group">
-                    <label for="name">name</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" value="{{item['name']}}">
+                    <label for="ch_word">ch_word</label>
+                    <input type="text" class="form-control" id="ch_word" name="ch_word" placeholder="Enter ch_word" >
                   </div>
 
 
 
                   <div class="form-group">
-                    <label for="words">words</label>
-                    <input type="text" class="form-control" id="words" name="words" placeholder="Enter words :ex=(word1,word2)" value="{{item['words']}}">
+                    <label for="en_word">en_word</label>
+                    <input type="text" class="form-control" id="en_word" name="en_word" placeholder="Enter en_word :ex=(word1,word2)">
                   </div>
 
                 </div>
@@ -43,7 +43,7 @@
 
                 <div class="card-footer">
                   <button type="submit" class="btn btn-primary">Submit</button>
-                  <a href="/admin/topic/show" class="btn btn-warning">Back</a>
+                  <a href="/admin/keyword/show" class="btn btn-warning">Back</a>
 
                 </div>
 

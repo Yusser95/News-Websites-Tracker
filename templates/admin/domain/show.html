@@ -6,7 +6,7 @@
 <!-- Default box -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Topics</h3>
+          <h3 class="card-title">Domains</h3>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -19,8 +19,8 @@
 
           <div class="card">
             <div class="card-header row">
-              <h3 class="col-lg-6 card-title">Topics Crud System</h3>
-              <a href="/admin/topic/create" class="offset-3 col-lg-3 btn btn-success" style="float: right;">Add New</a>
+              <h3 class="col-lg-6 card-title">Domains Crud System</h3>
+              <a href="/admin/domain/create" class="offset-3 col-lg-3 btn btn-success" style="float: right;">Add New</a>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
@@ -28,8 +28,7 @@
                 <thead>
                 <tr>
                   <th>id</th>
-                  <th>name</th>
-                  <th>words</th>
+                  <th>url</th>
                   <th>Edit</th>
                   <th>Delete</th>
                   <!-- <th>Delete</th> -->
@@ -37,13 +36,12 @@
                 </thead>
                 <tbody>
                   <?php 
-                  {% for item in topics %}
+                  {% for item in domains %}
                     <tr>
                       <td>{{ item['id'] }}</td>
-                      <td>{{ item['name'] }}</td>
-                      <td>{{ item['words'] }}</td>
-                      <td> <a href="/admin/topic/edit/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-edit"></i></a></td>
-                      <td> <a href="/admin/topic/delete/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-trash"></i></a></td>
+                      <td>{{ item['url'] }}</td>
+                      <td> <a href="/admin/domain/edit/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-edit"></i></a></td>
+                      <td> <a href="/admin/domain/delete/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-trash"></i></a></td>
                   
                     </tr>
                   {% endfor %}
@@ -52,8 +50,7 @@
                 <tfoot>
                 <tr>
                   <th>id</th>
-                  <th>name</th>
-                  <th>words</th>
+                  <th>url</th>
                   <th>Edit</th>
                   <th>Delete</th>
                   <!-- <th>Delete</th> -->
