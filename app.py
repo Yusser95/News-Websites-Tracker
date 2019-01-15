@@ -81,13 +81,13 @@ def get_data(selected_domains=None , selected_keywords=None):
 
 	print(selected_domains)
 	print(selected_keywords)
-	if selected_domains is not None and selected_keywords is not None:
+	if selected_domains and selected_keywords:
 		p_ids = Keyword_Pargraph.query.filter(Keyword_Pargraph.keyword_id.in_(selected_keywords)).all()
 		p_ids = [p.pargraph_id for p in p_ids]
 		pargraphs = Pargraph.query.filter(Pargraph.domain_id.in_(selected_domains),Pargraph.id.in_(p_ids)).all()
-	elif selected_domains is not None:
+	elif selected_domains:
 		pargraphs = Pargraph.query.filter(Pargraph.domain_id.in_(selected_domains)).all()
-	elif selected_keywords is not None:
+	elif selected_keywords:
 		p_ids = Keyword_Pargraph.query.filter(Keyword_Pargraph.keyword_id.in_(selected_keywords)).all()
 		p_ids = [p.pargraph_id for p in p_ids]
 		pargraphs = Pargraph.query.filter(Pargraph.id.in_(p_ids)).all()
