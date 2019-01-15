@@ -35,6 +35,9 @@
       <li class="nav-item d-none d-sm-inline-block">
         <a href="/admin" class="nav-link">Manage</a>
       </li>
+      <li class="nav-item d-none d-sm-inline-block" style="float: right;">
+        <div id="google_translate_element"></div>
+      </li>
     </ul>
 
   </nav>
@@ -42,6 +45,8 @@
 
 
   <br>
+
+  <div id="google_translate_element"></div>
 
   <div class="row justify-content-center">
 
@@ -176,7 +181,13 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.66.0-2013.10.09/jquery.blockUI.js"></script>
 
-
+<!-- googleTranslateElementInit -->
+<script src={{ url_for('static',filename="plugins/select2/googleTranslateElementInit.js") }}></script>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+</script>
 <!-- page script -->
 <script>
 
@@ -257,9 +268,7 @@
            
     loadData();
     event.preventDefault();       
-  });
-
-  
+  });  
 
 </script>
 </body>
