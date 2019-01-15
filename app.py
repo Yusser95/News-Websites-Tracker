@@ -246,6 +246,10 @@ def showdomain():
 @app.route("/admin/domain/delete/<id>" , methods =["GET"])
 def deletedomain(id):
 	print("deleted " , id)
+
+	Domain.query.filter_by(id=id).delete()
+	db.session.commit()
+
 	return redirect('/admin/domain/show')
 
 @app.route("/admin/domain/edit/<id>" , methods =["GET" , "POST"])
@@ -253,9 +257,12 @@ def editdomain(id):
 	print(id)
 	# edit
 	if request.method == "POST":
-		name = request.form.get('name')
-		words = request.form.get('words')
-		print(name,words)
+		url = request.form.get('url')
+
+		obj = Domain.query.filter_by(id=id).one()
+		obj.url = url
+		db.session.commit()
+
 		return redirect('/admin/domain/show')
 	# show  one row
 	elif request.method == "GET":
@@ -268,9 +275,16 @@ def editdomain(id):
 def createdomain():
 	# edit
 	if request.method == "POST":
-		name = request.form.get('name')
-		words = request.form.get('words')
-		print(name,words)
+		url = request.form.get('url')
+
+		obj = Keyword(url=url)
+		db.session.add(obj)
+		db.session.flush()
+		db.session.refresh(obj)
+		domain_id = obj.id
+		db.session.commit()
+
+
 		return redirect('/admin/domain/show')
 	# show  one row
 	elif request.method == "GET":
