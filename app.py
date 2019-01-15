@@ -181,9 +181,18 @@ def editkeyword(id):
 	print(id)
 	# edit
 	if request.method == "POST":
-		name = request.form.get('name')
-		words = request.form.get('words')
-		print(name,words)
+		ch_word = request.form.get('ch_word')
+		en_word = request.form.get('en_word')
+
+		obj = Keyword.query.filter_by(id=id).one()
+		unindex_data(obj.ch_word , id)
+
+		obj.ch_word = ch_word
+		obj.en_word = en_word
+		db.session.commit()
+
+		reindex_data(ch_word , id)
+
 		return redirect('/admin/keyword/show')
 	# show  one row
 	elif request.method == "GET":
