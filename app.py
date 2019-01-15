@@ -277,7 +277,7 @@ def createdomain():
 	if request.method == "POST":
 		url = request.form.get('url')
 
-		obj = Keyword(url=url)
+		obj = Domain(url=url)
 		db.session.add(obj)
 		db.session.flush()
 		db.session.refresh(obj)
