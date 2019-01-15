@@ -36,8 +36,8 @@ def main():
 	if request.method == "POST":
 
 		resp = {"success":False}
-		selected_domains = request.form.get('domains')
-		selected_keywords = request.form.get('keywors')
+		selected_domains = request.form.getlist('domains[]')
+		selected_keywords = request.form.getlist('keywords[]')
 
 		print("\n selected_domains : ",selected_domains,"\n selected_keywords : ",selected_keywords)
 		try:
@@ -78,6 +78,9 @@ def get_data(selected_domains=None , selected_keywords=None):
 	# ss= Sentiment.query.filter_by(keyword_id=selected_keyword[2:]).order_by(Sentiment.date).all()
 	# ss= Sentiment.query.filter(Sentiment.tweet_id.in_(selected_tweets)).order_by(Sentiment.date).all()
 	pargraphs = []
+
+	print(selected_domains)
+	print(selected_keywords)
 	if selected_domains is not None and selected_keywords is not None:
 		p_ids = Keyword_Pargraph.query.filter(Keyword_Pargraph.keyword_id.in_(selected_keywords)).all()
 		p_ids = [p.pargraph_id for p in p_ids]
@@ -121,7 +124,25 @@ def reindex_data(keyword , keyword_id):
                     db.session.add(obj)
                     db.session.commit()
 
-
+def unindex_data(keyword , keyword_id):
+    all_ps = Pargraph.query.all()
+    if all_ps:
+        for p in all_ps:
+            html = p.html
+            flag = False
+            if re.search(keyword, html):
+                flag = True
+                html = re.sub('<mark>'+keyword+"</mark>",keyword, html)
+                
+            
+            if flag:
+                p.html = html
+                db.session.commit()
+                
+                try:
+                    Keyword_Pargraph.query.filter_by(pargraph_id=p.id,keyword_id=keyword_id).delete()
+                except Exception as e:
+                    pass
 
 ###########      data
 
@@ -149,6 +170,10 @@ def showkeyword():
 @app.route("/admin/keyword/delete/<id>" , methods =["GET"])
 def deletekeyword(id):
 	print("deleted " , id)
+	obj = Keyword.query.filter_by(id=id).one()
+	unindex_data(obj.ch_word , id)
+	Keyword.query.filter_by(id=id).delete()
+	db.session.commit()
 	return redirect('/admin/keyword/show')
 
 @app.route("/admin/keyword/edit/<id>" , methods =["GET" , "POST"])

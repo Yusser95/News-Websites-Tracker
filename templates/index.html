@@ -46,7 +46,7 @@
   <div class="row justify-content-center">
 
 
-            <form role="form" action="/" method="post" class="col-md-12" style="margin: 15px">
+            <form id="myForm" role="form" action="/" method="post" class="col-md-12" style="margin: 15px">
             <div class="card card-info col-md-12">
               
               <div class="card-header">
@@ -118,15 +118,14 @@
                 <thead>
                 <tr>
                   <th>text</th>
-                  <th>domain</th>
                 </tr>
                 </thead>
                 <tbody>
                   <?php 
                   {% for item in data %}
                     <tr>
-                      <td>{{ item['html'] |safe }}</td>
-                      <td>{{ item['domain'] }}</td>
+                      <td><p>{{ item['html'] |safe }}</p> <br/> <strong>src : <a href="{{ item['domain'] |safe }}">{{ item['domain'] |safe }}</a></strong></td>
+                      
                     </tr>
                   {% endfor %}
                 
@@ -134,7 +133,6 @@
                 <tfoot>
                 <tr>
                   <th>text</th>
-                  <th>domain</th>
                 </tr>
                 </tfoot>
               </table>
@@ -255,8 +253,9 @@
 
   $(document).on("submit", "form", function(event)
   {
-    event.preventDefault();        
-    loadData();      
+           
+    loadData();
+    event.preventDefault();       
   });
 
   
