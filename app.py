@@ -15,6 +15,7 @@ from sqlalchemy import desc
 from operator import itemgetter
 from flask import make_response
 import time
+import re
 
 
 app = Flask(__name__)
@@ -94,11 +95,31 @@ def get_data(selected_domains=None , selected_keywords=None):
 
 
 	data = [{"html":p.html , "domain":Domain.query.filter_by(id=p.domain_id).one().url ,"order":len(Keyword_Pargraph.query.filter_by(pargraph_id=p.id).all())} for p in pargraphs]
-	data = sorted(data, key=itemgetter('order')) 
+	data = sorted(data, key=itemgetter('order') , reverse = True) 
 	return data
 
 
-
+def reindex_data(keyword , keyword_id):
+    all_ps = Pargraph.query.all()
+    if all_ps:
+        for p in all_ps:
+            html = p.html
+            flag = False
+            if re.search(keyword, html):
+                flag = True
+                html = re.sub(keyword,'<mark>'+keyword+"</mark>", html)
+                
+            
+            if flag:
+                p.html = html
+                db.session.commit()
+                
+                try:
+                    Keyword_Pargraph.query.filter_by(pargraph_id=p.id,keyword_id=keyword_id).one()
+                except Exception as e:
+                    obj = Keyword_Pargraph(pargraph_id=p.id,keyword_id=keyword_id)
+                    db.session.add(obj)
+                    db.session.commit()
 
 
 
@@ -153,9 +174,18 @@ def editkeyword(id):
 def createkeyword():
 	# edit
 	if request.method == "POST":
-		name = request.form.get('name')
-		words = request.form.get('words')
-		print(name,words)
+		ch_word = request.form.get('ch_word')
+		en_word = request.form.get('en_word')
+
+		obj = Keyword(ch_word=ch_word,en_word=en_word)
+		db.session.add(obj)
+		db.session.flush()
+		db.session.refresh(obj)
+		keyword_id = obj.id
+		db.session.commit()
+
+		reindex_data(ch_word,keyword_id)
+
 		return redirect('/admin/keyword/show')
 	# show  one row
 	elif request.method == "GET":

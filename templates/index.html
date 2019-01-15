@@ -72,7 +72,7 @@
                     <select class="form-control select2" name="keywords[]" multiple="multiple" data-placeholder="Select keywords"
                             style="width: 100%;" >
                       {% for result in keywords %}
-                      <option id="k_{{ result.id }}" value="{{ result.id }}">{{ result.ch_word }}</option>
+                      <option id="k_{{ result.id }}" value="{{ result.id }}">{{ result.en_word }}</option>
                       {% endfor %}
                     </select>
                   </div>
