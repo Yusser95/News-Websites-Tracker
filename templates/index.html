@@ -234,7 +234,8 @@
                 var table = $("#datatable tbody");
                 table.empty();
                 $.each(response.data, function(idx, elem){
-                    table.append("<tr><td>"+elem.html+"</td><td>"+elem.domain+"</td></tr>");
+                    // table.append("<tr><td>"+elem.html+"</td><td>"+elem.domain+"</td></tr>");
+                    table.append("<tr><td><p>"+elem.html+"</p> <br/> <strong>src : <a href="+elem.domain+">"+elem.domain+"</a></strong></td></tr>")
                 });
               },
               error: function (xhr, status, errorThrown) {
