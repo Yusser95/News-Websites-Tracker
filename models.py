@@ -39,3 +39,14 @@ class Keyword_Pargraph(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pargraph_id = db.Column(db.Integer,  nullable=False)
     keyword_id = db.Column(db.Integer,  nullable=False)
+
+
+class Settings_Schedule(db.Model):
+    __tablename__ = 'settings_schedule'
+
+    id = db.Column(db.Integer, primary_key=True)
+    activate = db.Column(db.String,  nullable=True)
+    days = db.Column(db.Integer,  nullable=True)
+
+
+

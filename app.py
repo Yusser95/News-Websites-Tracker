@@ -247,19 +247,34 @@ def index_all_data():
 def crawl_index_data(url , domain_id):
     start_time = time.time()
 
-    c = Crawler()
-    c.scrape_data(url,domain_id)
-
-    index_data(domain_id)
-
     obj = Domain.query.filter_by(id=domain_id).one()
-    obj.status = "Done"
-    db.session.commit()
+
+    if obj.status == "Done":
+	    obj.status = "Crawling"
+	    db.session.commit()
+
+	    c = Crawler()
+	    c.scrape_data(url,domain_id)
+
+	    index_data(domain_id)
+
+	    
+	    obj.status = "Done"
+	    db.session.commit()
 
     end_time = time.time() - start_time
 
     print("finished in ({}) s".format(end_time))
 
+def crawl_index_all_data():
+    start_time = time.time()
+
+    domains = Domain.query.all()
+    for d in domains:
+    	crawl_index_data(d.url , d.id)
+
+    end_time = time.time() - start_time
+    print("finished in ({}) s".format(end_time))
 ###########      login
 
 
@@ -344,6 +359,37 @@ def unauthorized_handler():
 def admin():
 	return render_template('admin.html')
 
+###########      settings scedule
+
+
+@app.route("/admin/settings/schedule" , methods =["GET", "POST"])
+@flask_login.login_required
+def settings_schedule():
+	
+	if request.method == "POST":
+		activate = request.form.get('activate')
+		days = request.form.get('days')
+
+		obj = Settings_Schedule.query.filter_by(id =1).one()
+		obj.days = days
+		obj.activate = activate
+		db.session.commit()
+
+		if activate == "Yes":
+
+			if scheduler.get_job('crawl_all'):
+				scheduler.remove_job('crawl_all')
+			scheduler.add_job(crawl_index_all_data, 'interval',days=int(days),id="crawl_all")
+		else:
+			if scheduler.get_job('crawl_all'):
+				scheduler.remove_job('crawl_all')
+
+		return render_template('admin/settings/schedule.html',item = {'activate':activate,'day':days})
+	else:
+		obj = Settings_Schedule.query.filter_by(id =1).one()
+		days = obj.days
+		activate = obj.activate
+		return render_template('admin/settings/schedule.html',item = {'activate':activate,'day':days})
 
 
 
@@ -461,12 +507,12 @@ def editdomain(id):
 
 		obj = Domain.query.filter_by(id=id).one()
 		obj.url = url
-		obj.status = "crawling"
+		obj.status = "Crawling"
 		db.session.commit()
 
 
 		dd = datetime.now() + timedelta(seconds=3)
-		scheduler.add_job(crawl_index_data, 'date',run_date=dd,id="tick_job", kwargs={'url':url,'domain_id':id})
+		scheduler.add_job(crawl_index_data, 'date',run_date=dd,id="crawl_"+str(domain_id), kwargs={'url':url,'domain_id':id})
 
 		return redirect('/admin/domain/show')
 	# show  one row
@@ -483,7 +529,7 @@ def createdomain():
 	if request.method == "POST":
 		url = request.form.get('url')
 
-		obj = Domain(url=url,status="crawling")
+		obj = Domain(url=url,status="Crawling")
 		db.session.add(obj)
 		db.session.flush()
 		db.session.refresh(obj)
@@ -492,7 +538,7 @@ def createdomain():
 
 
 		dd = datetime.now() + timedelta(seconds=3)
-		scheduler.add_job(crawl_index_data, 'date',run_date=dd,id="tick_job", kwargs={'url':url,'domain_id':domain_id})
+		scheduler.add_job(crawl_index_data, 'date',run_date=dd,id="crawl_"+str(domain_id), kwargs={'url':url,'domain_id':domain_id})
 
 
 		return redirect('/admin/domain/show')

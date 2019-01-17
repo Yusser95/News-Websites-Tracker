@@ -1,0 +1,70 @@
+{% extends "admin/base.html" %}
+
+
+{% block body %}
+
+<!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Schedule</h3>
+              </div>
+
+
+
+
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form role="form" action="/admin/settings/schedule" method="post" enctype="multipart/form-data">
+
+                <div class="card-body">
+
+                <div class="col-lg-10">
+
+
+                  <!-- radio -->
+                <div class="form-group">
+                  <label>is activated :</label>
+                  <div class="form-control">
+                  <label>
+                    <input type="radio" name="activate" value="Yes" class="minimal" id="Yes">
+                    Yes
+                  </label>
+                  <label>
+                    <input type="radio" name="activate" value="No" class="minimal" id="No" >
+                    No
+                  </label>
+                </div>
+                </div>
+
+
+                  <div class="form-group">
+                  <label>run crawler every :</label>
+                  <select class="form-control select2" name="days" style="width: 100%;">
+                    {% for i in range(1,31) %}
+                      <option id="day_{{ i }}" value="{{ i }}">{{ i }} day</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+
+
+                </div>
+
+
+			</div>
+
+				
+		        <!-- /.col-->
+
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-primary">Save Settings</button>
+                </div>
+
+				</form>
+               </div>
+
+<script type="text/javascript">
+  document.getElementById("{{item['activate']}}").checked = true;
+  document.getElementById("day_{{item['day']}}").selected = true;
+</script>
+{% endblock %}
