@@ -42,7 +42,7 @@
 		        <!-- /.col-->
 
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" onclick="indexing_in_process()" class="btn btn-primary">Submit</button>
                   <a href="/admin/keyword/show" class="btn btn-warning">Back</a>
 
                 </div>
@@ -50,5 +50,11 @@
 				</form>
                </div>
 
+
+<script type="text/javascript">
+function indexing_in_process() {
+  alert("data are being indexed , it might take 2 to 3 minutes to finish !");
+}
+</script>
 
 {% endblock %}
