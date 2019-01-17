@@ -27,8 +27,8 @@ app.secret_key = 'yusserbaby'
 
 cwd = os.getcwd()
 print(cwd)
-app.config['SQLALCHEMY_DATABASE_URI'] =  os.environ.get("CLEARDB_DATABASE_URL")[:-15] #'sqlite:///'+cwd+'/resources/data.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] =  'sqlite:///'+cwd+'/resources/data.db' #os.environ.get("CLEARDB_DATABASE_URL")[:-15] #'sqlite:///'+cwd+'/resources/data.db'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
