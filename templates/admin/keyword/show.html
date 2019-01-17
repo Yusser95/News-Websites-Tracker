@@ -43,7 +43,7 @@
                       <td>{{ item.ch_word }}</td>
                       <td>{{ item.en_word }}</td>
                       <td> <a href="/admin/keyword/edit/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-edit"></i></a></td>
-                      <td> <a href="/admin/keyword/delete/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-trash"></i></a></td>
+                      <td> <a onclick="indexing_in_process()" href="/admin/keyword/delete/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-trash"></i></a></td>
                   
                     </tr>
                   {% endfor %}
@@ -75,5 +75,9 @@
       </div>
       <!-- /.card -->
 
-
+<script type="text/javascript">
+function indexing_in_process() {
+  alert("data are being unindexed , it might take 2 to 3 minutes to finish !");
+}
+</script>
 {% endblock %}

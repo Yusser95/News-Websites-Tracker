@@ -434,7 +434,12 @@ def editkeyword(id):
 		en_word = request.form.get('en_word')
 
 		obj = Keyword.query.filter_by(id=id).one()
-		unindex_data(obj.ch_word , id)
+
+		dd = datetime.now() + timedelta(seconds=3)
+		scheduler.add_job(unindex_data, 'date',run_date=dd,id="unindex_"+str(id), kwargs={'keyword':obj.ch_word,'keyword_id':id})
+		# unindex_data(obj.ch_word , id)
+
+
 
 		obj.ch_word = ch_word
 		obj.en_word = en_word
