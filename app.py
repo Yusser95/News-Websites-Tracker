@@ -249,7 +249,7 @@ def crawl_index_data(url , domain_id):
 
     obj = Domain.query.filter_by(id=domain_id).one()
 
-    if obj.status == "Done":
+    if obj.status == "Done!":
 	    obj.status = "Crawling"
 	    db.session.commit()
 
@@ -259,7 +259,7 @@ def crawl_index_data(url , domain_id):
 	    index_data(domain_id)
 
 	    
-	    obj.status = "Done"
+	    obj.status = "Done!"
 	    db.session.commit()
 
     end_time = time.time() - start_time
