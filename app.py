@@ -28,7 +28,7 @@ app.secret_key = 'yusserbaby'
 cwd = os.getcwd()
 print(cwd)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+cwd+'/resources/data.db'
-app.config['SCHEDULER_API_ENABLED'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
