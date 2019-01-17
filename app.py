@@ -435,7 +435,11 @@ def editkeyword(id):
 		obj.en_word = en_word
 		db.session.commit()
 
-		reindex_data(ch_word , id)
+
+		dd = datetime.now() + timedelta(seconds=3)
+		scheduler.add_job(reindex_data, 'date',run_date=dd,id="reindex_"+str(keyword_id), kwargs={'keyword':ch_word,'keyword_id':id})
+
+		# reindex_data(ch_word , id)
 
 
 		return redirect('/admin/keyword/show')
@@ -464,7 +468,11 @@ def createkeyword():
 		keyword_id = obj.id
 		db.session.commit()
 
-		reindex_data(ch_word,keyword_id)
+
+		dd = datetime.now() + timedelta(seconds=3)
+		scheduler.add_job(reindex_data, 'date',run_date=dd,id="reindex_"+str(keyword_id), kwargs={'keyword':ch_word,'keyword_id':keyword_id})
+
+		# reindex_data(ch_word,keyword_id)
 
 		return redirect('/admin/keyword/show')
 	# show  one row
