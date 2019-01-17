@@ -3,7 +3,6 @@ import requests
  
 import re
 from sys import exit
-import pandas as pd
 from bs4 import BeautifulSoup
 import os
 import unicodedata
