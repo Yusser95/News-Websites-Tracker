@@ -7,6 +7,7 @@ class Domain(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String, nullable=False)
+    status = db.Column(db.String, nullable=True)
 
 
 
@@ -28,6 +29,7 @@ class Pargraph(db.Model):
     domain_id = db.Column(db.Integer ,  nullable=False)
     text = db.Column(db.String,  nullable=False)
     html = db.Column(db.String,  nullable=True)
+    file_name = db.Column(db.String,  nullable=True)
 
 
 

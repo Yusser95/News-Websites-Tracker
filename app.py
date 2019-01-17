@@ -11,10 +11,13 @@ from flask import render_template
 from flask import request
 from flask import redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+# from flask_apscheduler import APScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import desc
 from operator import itemgetter
 from flask import make_response
 import time
+from datetime import datetime, timedelta
 import re
 
 
@@ -23,10 +26,19 @@ app = Flask(__name__)
 cwd = os.getcwd()
 print(cwd)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+cwd+'/resources/data.db'
+app.config['SCHEDULER_API_ENABLED'] = True
 db = SQLAlchemy(app)
 
 
+scheduler = BackgroundScheduler()
+
+# scheduler = APScheduler()
+# scheduler.init_app(app)
+scheduler.start()
+
+
 from models import *
+from crawler import Crawler
  
  
 @app.route("/" , methods =["POST" , "GET"])
@@ -99,7 +111,7 @@ def get_data(selected_domains=None , selected_keywords=None):
 
 	data = [{"html":p.html , "domain":Domain.query.filter_by(id=p.domain_id).one().url ,"order":len(Keyword_Pargraph.query.filter_by(pargraph_id=p.id).all())} for p in pargraphs]
 	data = sorted(data, key=itemgetter('order') , reverse = True) 
-	return data
+	return data[:20]
 
 
 def reindex_data(keyword , keyword_id):
@@ -144,8 +156,110 @@ def unindex_data(keyword , keyword_id):
                 except Exception as e:
                     pass
 
+def index_data(domain_id):
+    keywords = Keyword.query.all()
+    for (dirpath, dirnames, filenames) in os.walk("./data/"+str(domain_id)):#../patents data
+        for file in filenames:
+            html = None
+            with open("./data/"+str(domain_id)+"/"+file , "rb") as f:
+                html = f.read()
+            soup = BeautifulSoup(html,"lxml")
+            all_ps = soup.findAll("p")
+            if all_ps:
+                for p in all_ps:
+                    
+                    text = p.getText(strip=True)
+                    
+#                     print(p)
+                    if text:
+#                         print(text)
+
+                        html = text
+
+                        flag = False
+                        keywords_in_paragraph = []
+                        for w in keywords:
+                            if re.search(w.ch_word, html):
+                                flag = True
+                                keywords_in_paragraph.append(w.id)
+                                html = re.sub(w.ch_word,'<mark>'+w.ch_word+"</mark>", html)
+    #                             print(html)
+
+                        p_id = None
+#                         print(text)
+
+                        # print('-'*30)
+                        # try:
+                        #     obj = Pargraph.query.filter_by(file_name=file,domain_id=domain_id).one()
+                        #     obj.text=text
+                        #     obj.html=html
+                        #     p_id = obj.id
+                        #     db.session.commit()
+                        # except Exception as e:
+                        #     obj = Pargraph(text=text,html=html,domain_id=domain_id,file_name=file)
+                        #     db.session.add(obj)
+                        #     db.session.flush()
+                        #     db.session.refresh(obj)
+                        #     p_id = obj.id
+                        #     db.session.commit()
+
+
+                        obj = Pargraph(text=text,html=html,domain_id=domain_id,file_name=file)
+                        db.session.add(obj)
+                        db.session.flush()
+                        db.session.refresh(obj)
+                        p_id = obj.id
+                        db.session.commit()
+
+
+                        if flag:
+                            for keyword_id in keywords_in_paragraph:
+                                try:
+                                    Keyword_Pargraph.query.filter_by(pargraph_id=p_id,keyword_id=keyword_id).one()
+                                except Exception as e:
+                                    obj = Keyword_Pargraph(pargraph_id=p_id,keyword_id=keyword_id)
+                                    db.session.add(obj)
+                                    db.session.commit()
+
+        break
+
+
+def index_all_data():
+    start_time = time.time()
+    domains = Domain.query.all()
+    for d in domains:
+        print(d.url)
+        index_data(d.id)
+    
+    end_time = time.time() - start_time
+    print("finished in ({}) s".format(end_time))
+
+
+def crawl_index_data(url , domain_id):
+    start_time = time.time()
+
+    c = Crawler()
+    c.scrape_data(url,domain_id)
+
+    index_data(domain_id)
+
+    obj = Domain.query.filter_by(id=domain_id).one()
+    obj.status = "Done"
+    db.session.commit()
+
+    end_time = time.time() - start_time
+
+    print("finished in ({}) s".format(end_time))
+
 ###########      data
 
+
+
+# cron examples
+# @scheduler.task('date', id='do_job_2')
+# def job1():
+#     print('Job 2 executed')
+#     print("starting job")
 
 
 @app.route("/admin" , methods =["GET"])
@@ -192,6 +306,7 @@ def editkeyword(id):
 		db.session.commit()
 
 		reindex_data(ch_word , id)
+
 
 		return redirect('/admin/keyword/show')
 	# show  one row
@@ -261,7 +376,12 @@ def editdomain(id):
 
 		obj = Domain.query.filter_by(id=id).one()
 		obj.url = url
+		obj.status = "crawling"
 		db.session.commit()
+
+
+		dd = datetime.now() + timedelta(seconds=3)
+		scheduler.add_job(crawl_index_data, 'date',run_date=dd,id="tick_job", kwargs={'url':url,'domain_id':id})
 
 		return redirect('/admin/domain/show')
 	# show  one row
@@ -277,12 +397,16 @@ def createdomain():
 	if request.method == "POST":
 		url = request.form.get('url')
 
-		obj = Domain(url=url)
+		obj = Domain(url=url,status="crawling")
 		db.session.add(obj)
 		db.session.flush()
 		db.session.refresh(obj)
 		domain_id = obj.id
 		db.session.commit()
+
+
+		dd = datetime.now() + timedelta(seconds=3)
+		scheduler.add_job(crawl_index_data, 'date',run_date=dd,id="tick_job", kwargs={'url':url,'domain_id':domain_id})
 
 
 		return redirect('/admin/domain/show')

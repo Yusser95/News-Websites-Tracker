@@ -29,6 +29,7 @@
                 <tr>
                   <th>id</th>
                   <th>url</th>
+                  <th>status</th>
                   <th>Edit</th>
                   <th>Delete</th>
                   <!-- <th>Delete</th> -->
@@ -40,6 +41,7 @@
                     <tr>
                       <td>{{ item['id'] }}</td>
                       <td>{{ item['url'] }}</td>
+                      <td>{{ item['status'] }}</td>
                       <td> <a href="/admin/domain/edit/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-edit"></i></a></td>
                       <td> <a href="/admin/domain/delete/{{ item['id'] }}" class="nav-link"><i class="nav-icon fa fa-trash"></i></a></td>
                   
@@ -51,6 +53,7 @@
                 <tr>
                   <th>id</th>
                   <th>url</th>
+                  <th>status</th>
                   <th>Edit</th>
                   <th>Delete</th>
                   <!-- <th>Delete</th> -->
