@@ -414,7 +414,10 @@ def showkeyword():
 def deletekeyword(id):
 	print("deleted " , id)
 	obj = Keyword.query.filter_by(id=id).one()
-	unindex_data(obj.ch_word , id)
+
+	dd = datetime.now() + timedelta(seconds=3)
+	scheduler.add_job(unindex_data, 'date',run_date=dd,id="unindex_"+str(id), kwargs={'keyword':obj.ch_word,'keyword_id':id})
+	# unindex_data(obj.ch_word , id)
 	Keyword.query.filter_by(id=id).delete()
 	db.session.commit()
 	return redirect('/admin/keyword/show')
@@ -437,7 +440,7 @@ def editkeyword(id):
 
 
 		dd = datetime.now() + timedelta(seconds=3)
-		scheduler.add_job(reindex_data, 'date',run_date=dd,id="reindex_"+str(keyword_id), kwargs={'keyword':ch_word,'keyword_id':id})
+		scheduler.add_job(reindex_data, 'date',run_date=dd,id="reindex_"+str(id), kwargs={'keyword':ch_word,'keyword_id':id})
 
 		# reindex_data(ch_word , id)
 
