@@ -275,6 +275,9 @@ def crawl_index_all_data():
 
     end_time = time.time() - start_time
     print("finished in ({}) s".format(end_time))
+
+
+    
 ###########      login
 
 
