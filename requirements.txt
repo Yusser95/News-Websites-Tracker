@@ -13,6 +13,7 @@ SQLAlchemy
 #mysql-connector-python
 beautifulsoup4
 
+flask-login
 Flask-SQLAlchemy
 flask-migrate
 flask-bootstrap

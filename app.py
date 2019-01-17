@@ -10,6 +10,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect, url_for
+import flask_login
 from flask_sqlalchemy import SQLAlchemy
 # from flask_apscheduler import APScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -22,6 +23,7 @@ import re
 
 
 app = Flask(__name__)
+app.secret_key = 'yusserbaby'
 
 cwd = os.getcwd()
 print(cwd)
@@ -29,6 +31,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+cwd+'/resources/data.db'
 app.config['SCHEDULER_API_ENABLED'] = True
 db = SQLAlchemy(app)
 
+
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+
+# Our mock database.
+users = {'admin': {'password': 'admin'}}
 
 scheduler = BackgroundScheduler()
 
@@ -251,8 +260,76 @@ def crawl_index_data(url , domain_id):
 
     print("finished in ({}) s".format(end_time))
 
-###########      data
+###########      login
 
+
+
+class User(flask_login.UserMixin):
+    pass
+
+
+@login_manager.user_loader
+def user_loader(username):
+    if username not in users:
+        return
+
+    user = User()
+    user.id = username
+    return user
+
+
+@login_manager.request_loader
+def request_loader(request):
+    username = request.form.get('username')
+    if username not in users:
+        return
+
+    user = User()
+    user.id = username
+
+    # DO NOT ever store passwords in plaintext and always compare password
+    # hashes using constant-time comparison!
+    user.is_authenticated = request.form['password'] == users[username]['password']
+
+    return user
+
+
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('admin/login/login.html')
+
+    username = request.form['username']
+    if username in users:
+	    if request.form['password'] == users[username]['password']:
+	        user = User()
+	        user.id = username
+	        flask_login.login_user(user)
+	        return redirect('/admin')
+
+    return redirect('/admin/login')
+
+
+@app.route('/admin/logout')
+def logout():
+    flask_login.logout_user()
+    return 'Logged out'
+
+
+
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return redirect('/admin/login')
+
+
+
+
+
+
+
+
+###########      admin
 
 
 # cron examples
@@ -263,6 +340,7 @@ def crawl_index_data(url , domain_id):
 
 
 @app.route("/admin" , methods =["GET"])
+@flask_login.login_required
 def admin():
 	return render_template('admin.html')
 
@@ -276,12 +354,14 @@ def admin():
 
 
 @app.route("/admin/keyword/show" , methods =["GET"])
+@flask_login.login_required
 def showkeyword():
 
 	keywords = Keyword.query.all()
 	return render_template('admin/keyword/show.html',keywords=keywords)
 
 @app.route("/admin/keyword/delete/<id>" , methods =["GET"])
+@flask_login.login_required
 def deletekeyword(id):
 	print("deleted " , id)
 	obj = Keyword.query.filter_by(id=id).one()
@@ -291,6 +371,7 @@ def deletekeyword(id):
 	return redirect('/admin/keyword/show')
 
 @app.route("/admin/keyword/edit/<id>" , methods =["GET" , "POST"])
+@flask_login.login_required
 def editkeyword(id):
 	print(id)
 	# edit
@@ -320,6 +401,7 @@ def editkeyword(id):
 
 
 @app.route("/admin/keyword/create" , methods =["GET" , "POST"])
+@flask_login.login_required
 def createkeyword():
 	# edit
 	if request.method == "POST":
@@ -354,11 +436,13 @@ def createkeyword():
 
 
 @app.route("/admin/domain/show" , methods =["GET"])
+@flask_login.login_required
 def showdomain():
 	domains = Domain.query.all()
 	return render_template('admin/domain/show.html',domains=domains)
 
 @app.route("/admin/domain/delete/<id>" , methods =["GET"])
+@flask_login.login_required
 def deletedomain(id):
 	print("deleted " , id)
 
@@ -368,6 +452,7 @@ def deletedomain(id):
 	return redirect('/admin/domain/show')
 
 @app.route("/admin/domain/edit/<id>" , methods =["GET" , "POST"])
+@flask_login.login_required
 def editdomain(id):
 	print(id)
 	# edit
@@ -392,6 +477,7 @@ def editdomain(id):
 
 
 @app.route("/admin/domain/create" , methods =["GET" , "POST"])
+@flask_login.login_required
 def createdomain():
 	# edit
 	if request.method == "POST":
