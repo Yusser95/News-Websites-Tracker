@@ -11,9 +11,8 @@ SQLAlchemy
 
 
 #mysql-connector-python
-#beautifulsoup4
+beautifulsoup4
 
-#apscheduler
 Flask-SQLAlchemy
 flask-migrate
 flask-bootstrap
