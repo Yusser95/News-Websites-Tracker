@@ -18,7 +18,7 @@ Flask-SQLAlchemy
 flask-migrate
 flask-bootstrap
 #mysql-python
-#mysqlclient
+mysqlclient
 #Cython
 #git+git://github.com/kivy/pyjnius.git
 Flask-WTF
